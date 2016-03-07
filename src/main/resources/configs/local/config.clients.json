@@ -1,0 +1,8 @@
+[
+	{
+		"ua": "local_dev_client",
+		"signKey": "guess_guess_try_try",
+		"allowedIP": [ "127.0.0.1" ],
+		"allowedAPI": [ "*" ]
+	}
+]

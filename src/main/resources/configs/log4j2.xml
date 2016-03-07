@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" monitorInterval="1800" name="GTL" packages="">
+	<properties>
+		<!-- ${web:rootDir}代表项目的目录 -->
+		<property name="LOG_HOME">${web:rootDir}/../${web:servletContextName}Logs</property>
+		<property name="INFO_NAME">${web:servletContextName}_INFO</property>
+		<property name="WARN_NAME">${web:servletContextName}_WARN</property>
+		<property name="ERROR_NAME">${web:servletContextName}_ERROR</property>
+		<property name="FATAL_NAME">${web:servletContextName}_FATAL</property>
+	</properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<!-- 输出日志的信息格式 <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" /> -->
+			<PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} : %msg%n" />
+			<!-- 过滤日志级别 -->
+		</Console>
+		<File name="localFile">
+			<!-- 日志文件的完整路径+文件名 -->
+			<fileName>${LOG_HOME}/${web:servletContextName}.log</fileName>
+			<!-- 是否紧跟在老日志文件之后,继续添加文件 -->
+			<append>true</append>
+			<!-- 是否使用缓存写入日志文件 -->
+			<bufferedIO>true</bufferedIO>
+			<bufferSize>1024</bufferSize>
+			<immediateFlush>false</immediateFlush>
+			<locking>false</locking>
+			<!-- 过滤日志级别 -->
+			<Filters>
+				<!-- 接受的级别 -->
+				<ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+				<!-- 阻止的级别 -->
+				<ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL" />
+			</Filters>
+			<!-- 输出日志的信息格式 -->
+			<PatternLayout charset="UTF-8" pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} : %msg%n" />
+		</File>
+		<File name="infoFile">
+			<fileName>${LOG_HOME}/${INFO_NAME}.log</fileName>
+			<append>true</append>
+			<Filters>
+				<!-- 拒绝WARN级别及以上,接受INFO级别及以上不匹配的都拒绝 -->
+				<ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL" />
+				<ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<PatternLayout charset="UTF-8" pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} : %msg%n" />
+		</File>
+		<File name="warnFile">
+			<fileName>${LOG_HOME}/${WARN_NAME}.log</fileName>
+			<append>true</append>
+			<Filters>
+				<!-- 拒绝ERROR级别及以上,接受WARN级别及以上不匹配的都拒绝 -->
+				<ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL" />
+				<ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<PatternLayout charset="UTF-8" pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} : %msg%n" />
+		</File>
+		<File name="errorFile">
+			<fileName>${LOG_HOME}/${ERROR_NAME}.log</fileName>
+			<append>true</append>
+			<Filters>
+				<!-- 拒绝FATAL级别及以上,接受ERROR级别及以上不匹配的都拒绝 -->
+				<ThresholdFilter level="FATAL" onMatch="DENY" onMismatch="NEUTRAL" />
+				<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<PatternLayout charset="UTF-8" pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} : %msg%n" />
+		</File>
+		<File name="fatalFile">
+			<fileName>${LOG_HOME}/${FATAL_NAME}.log</fileName>
+			<append>true</append>
+			<Filters>
+				<!-- 接受FATAL级别及以上,不匹配的都拒绝 -->
+				<ThresholdFilter level="FATAL" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<PatternLayout charset="UTF-8" pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} : %msg%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="ALL">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="localFile" />
+			<AppenderRef ref="infoFile" />
+			<AppenderRef ref="warnFile" />
+			<AppenderRef ref="errorFile" />
+			<AppenderRef ref="fatalFile" />
+		</Root>
+	</Loggers>
+</Configuration>

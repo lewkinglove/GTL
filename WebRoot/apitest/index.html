@@ -1,0 +1,159 @@
+<head>
+<meta http-equiv=Content-Type content="text/html;charset=utf-8">
+<title>GTL_Api_Call_Client</title>
+<style type="text/css">
+input {
+	width: 100%;
+	height: 40px;
+	font-size: 20px;
+	padding-left: 8px;
+}
+
+pre {
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+#box {
+	width: 85%;
+	margin: 0 auto;
+	padding: 25px;
+}
+
+#sendRequest {
+	width: 100%;
+	height: 55px;
+	font-size: 20px;
+	padding-left: 8px;
+}
+
+#tblMain {
+	width: 99%;
+	border: 1px solid gray;
+	margin: auto 15px auto 15px;
+	padding: 25px;
+}
+
+#tblMain th.one {
+	width: 12%;
+}
+
+#tblMain th.two {
+	width: 88%;
+}
+
+tr {
+	height: 50px;
+}
+
+#subTitle {
+	font-size: 35px;
+}
+
+#RESPONSE {
+	width: 99%;
+	min-height: 150px;
+	border: 1px solid silver;
+	padding: 5px;
+}
+</style>
+<script type="text/javascript" src="js/md5.min.js"></script>
+<script type="text/javascript" src="js/JsonUti.js"></script>
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+	var API_URL = window.location.href.replace("apitest/", "api");
+	var CALLCLIENT_UA = "local_dev_client";
+	var CALLCLIENT_SIGNKEY = "guess_guess_try_try";
+
+	function sendRequest() {
+		var call = document.getElementById("call").value;
+		if (call.length < 5) {
+			alert("请求路径输入有误, 请重新输入...");
+			return false;
+		}
+
+		var args = document.getElementById("args").value;
+		if (args.length < 2) {
+			alert("JSON参数输入有误, 请重新输入...");
+			return false;
+		}
+
+		window.localStorage.setItem('call', call);
+		window.localStorage.setItem('args', args);
+
+		//生成请求签名
+		var signKey = CALLCLIENT_UA + CALLCLIENT_SIGNKEY + CALLCLIENT_UA;
+		signKey = md5(signKey + call + signKey + args + signKey);
+
+		$("#RESPONSE").html('');
+		var request = $.ajax({
+			url : API_URL,
+			type : "POST",
+			data : {
+				'call' : call,
+				'args' : args,
+				'sign' : signKey,
+				"ua" : CALLCLIENT_UA
+			},
+			//dataType: "json",
+			success : function(data) {
+				try {
+					var jsonStr = JsonUti
+							.convertToString(eval("(" + data + ")"))
+					$("#RESPONSE").css("border-color", "green").html(jsonStr);
+				} catch (exception) {
+					$("#RESPONSE").css("border-color", "red").html(data);
+				}
+			}
+		});
+
+	}
+
+	$(function() {
+		if (window.localStorage.getItem('call'))
+			$("#call").val(window.localStorage.getItem('call'));
+		if (window.localStorage.getItem('args'))
+			$("#args").val(window.localStorage.getItem('args'));
+
+		$("#sendRequest").click(sendRequest);
+	});
+</script>
+</head>
+<body>
+
+	<center id="box">
+		<table id="tblMain">
+			<tr>
+				<th colspan="2"><span id="subTitle">Global Transaction Layer(GTL) Api Client</span>
+				<hr></th>
+			</tr>
+
+			<tr>
+				<th class="one">Api名称:</th>
+				<td class="two"><input type="text" id="call"
+					value="beginTransaction" /></td>
+			</tr>
+			<tr>
+				<th class="one">JSON参数:</th>
+				<td class="two"><input type="text" id="args"
+					value='{"dsId": "default", "timeout": 5000}' /></td>
+			</tr>
+
+			<tr>
+				<td colspan="2"><input type="button" id="sendRequest"
+					value="确认并发送请求"></td>
+			</tr>
+			<tr>
+				<th valign="top">返回结果:</th>
+				<td><pre id="RESPONSE"></pre></td>
+			</tr>
+
+		</table>
+
+	</center>
+
+</body>
+</html>
