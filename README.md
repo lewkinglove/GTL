@@ -19,6 +19,7 @@ GTL(Global Transaction Layer)
 
 ###数据交换格式:  
 > JSON　　　　　**二期使用MsgPack后以二进制流传输**
+
 ###请求协议:
     HOST:   http(s)://gtl.example.com
     METHOD: POST
@@ -46,77 +47,98 @@ GTL(Global Transaction Layer)
 三、接口列表:
 -------------------------------------------------------
 ###beginTransaction        开始事务
+
 ######接口参数:  
 > dsId      &emsp;&emsp;       [可选参数]数据源编号, 当有txId的参数时, 此项可不传  
 > timeout   &ensp;             [可选参数]指定事务超时时间, 如果为指定, 则使用全局设定  
 > txId      &emsp;&emsp;       [可选参数]事务编号; 如果已经有了一个已开启的事务, 则直接把编号发过来, 这边会选中这个已开启的事务;  
+
 ######返回值:  
 > 开始的事务编号, 可用于其他操作复用  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
 
 ***
 
 ###commitTransaction        提交事务
+
 ######接口参数:  
 > txId      &emsp;&emsp;       事务编号  
+
 ######返回值:  
 > 布尔型; 成功或者失败  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
 
 ***
 
 ###rollbackTransaction     回滚事务
+
 ######接口参数:  
 > txId      &emsp;&emsp;       事务编号  
+
 ######返回值:  
 > 布尔型; 成功或者失败  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
 
 ***
 
 ###executeQuery            执行SQL查询(事务环境内)
+
 ######接口参数:  
 > txId      &emsp;&emsp;            事务编号  
 > sql       &emsp;&emsp;&ensp;      要执行的SQL语句; 形如: SELECT * FROM User WHERE uname='liujng' AND upwd='123123'  
+
 ######返回值:  
 > Table List Or Row Array, 形如[{rowdata...},{rowdata...}]  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
 
 ***
 
 ###executePreparedQuery    执行预编译的SQL查询(事务环境内)
+
 ######接口参数:  
 > txId      &emsp;&emsp;            事务编号  
 > sql       &emsp;&emsp;&ensp;      要执行的预编译SQL语句; 形如: SELECT * FROM User WHERE uname=? AND upwd=?  
 > sqlArgs   &ensp;                  key-value paris, 预编译SQL的参数; 形如: ['liujing','123123']  
+
 ######返回值:  
 > Table List Or Row Array, 形如[{rowdata...},{rowdata...}]  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
 
 ***
 
 ###executeNonQuery         执行非查询类SQL(事务环境内)
+
 ######接口参数:  
 > txId      &emsp;&emsp;          事务编号  
 > sql       &emsp;&emsp;&ensp;    要执行的SQL语句; 形如: UPDATE User SET upwd='456456' WHERE uname='liujing'  
+
 ######返回值:  
 > {affectedRows: 影响的行数, autoIncrementId: 自增编号}  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
 
 ***
 
 ###executePreparedNonQuery    执行预编译的非查询类SQL(事务环境内)
+
 ######接口参数:  
 > txId      &emsp;&emsp;            事务编号  
 > sql       &emsp;&emsp;&ensp;      要执行的预编译SQL语句; 形如: UPDATE User SET upwd=? WHERE uname=?  
 > sqlArgs   &ensp;                  key-value paris, 预编译SQL的参数; 形如: ['456456', 'liujing']  
+
 ######返回值:  
 > {affectedRows: 影响的行数, autoIncrementId: 自增编号}  
+
 ######可能的错误:  
 > 01      未找到进行中的指定事务编号(txId)的事务  
