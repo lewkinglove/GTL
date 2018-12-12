@@ -33,10 +33,13 @@ GTL(Global Transaction Layer)
 ###请求示例
 > http(s)://gtl.example.com/api?call=beginTransaction&args={dsId: 'peizi'}&ua=ios_client_ua&sign=asdflsadjflkjsafdljlaskjfdl
 
-###签名生成算法
-> const API_UA = "ios_client_ua";  
-> const API_SECKEY = API_UA."分配给子系统的签名密钥".API_UA;  
-> $sign = md5( API_SECKEY . call . API_SECKEY . args . API_SECKEY  );
+###签名生成算法（以javascript为例）
+> var API_UA = "系统分配的UA，如：LOCAL_DEV_CLIENT";  
+> var API_SECKEY = "系统分配的签名密钥，如：LOCAL_DEV_CLIENT_SIGN";  
+> API_SECKEY = API_UA + API_SECKEY + API_UA;  
+> var call = "Wechat.AccessToken.get";
+> var args = "{"appid": "wxf2ceed92f939b67a"}";
+> var signature = md5( API_SECKEY . call . API_SECKEY . args . API_SECKEY  );
 
 ###响应标准:
     data            接口返回数据. 默认为 null. 根据业务不同可以为数组 或 其他任意对象
